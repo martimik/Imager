@@ -55,41 +55,9 @@ This repository contains "Coding REST API" assignment for TTOW0130 - Service-Ori
 
 ## Database description
 
-Data is stored as JSON-objects inside MongoDB-database.
+Data is stored inside postgreSql database.
 
-```
-
-{
-    "user": [
-        {
-            "id": int,
-            "username": string,
-            "email": string,
-            "password": string,
-            "usergroup": int,
-            "favorites": ["imageId": int]
-        }
-    ],
-    "image": [
-        {
-            "id": int,
-            "uploaderId": int,
-            "title": string,
-            "uploadDate": datetime,
-            "private": bool,
-            "comments": [
-                "id": int,
-                "userId": int,
-                "comment": string
-            ],
-            "upvotes": ["userId": int],
-            "downvotes": ["userId": int],
-            "location": string
-        }
-    ]
-}
-
-```
+![](db-schema.png)
 
 # API Documentation
 
@@ -113,9 +81,67 @@ Resource URIs
 /users/favorites/{id}
 
 /images
+/images/{id}
 /images/{id}/votes
 /images/{id}/comments
-/images/{id}/comments/{id}
+
+/comments/{id}
+```
+
+## Users
+
+* Create a new user to the database if the given email is not already in use. Usergroup always defaults to normal user.
+
+```
+POST /users
+
+Parameters: { userName, password, email }
+Response: { tbd }
+```
+
+## Login
+
+* Authenticate the user and creates a session on the server. 
+
+```
+POST /users/login
+
+Parameters: { userName, password }
+Response: { tbd }
+```
+
+## logout
+
+* Destroy the session on the server if it exists.
+
+```
+POST /users/logout
+Response: { tbd }
+```
+
+## Favorites
+
+* Get user favorite images
+
+```
+GET /users/favorites
+Parameters: { userId }
+Response: { tbd }
+```
+
+* Add image to user favorites
+
+```
+POST /users/favorites
+Parameters: { imageId }
+Response: { tbd }
+```
+
+* Remove image from user favorites
+
+```
+DELETE /users/favorites/{id}
+Response: { tbd }
 ```
 
 ## Images
@@ -134,40 +160,27 @@ Response: { tbd }
 ```
 GET /images
 
-Parameters: { uploader, isFavorite }
+Parameters: { uploader }
 Response: [ {image} ]
 ```
 
-## Users
-
-* Creates a new user to the database if the given email is not already in use. Usergroup always defaults to normal user.
+* Return a specific image.
 
 ```
-POST /users
+GET /images/{id}
 
-Parameters: { userName, password, email }
+Parameters: { }
+Response: [ {image} ]
+```
+
+* Add a comment to image.
+
+```
+POST /images/{id}/comments
+Parameters: { comment }
 Response: { tbd }
 ```
 
-## Login
-
-* Authenticates the user and creates a session on the server. 
-
-```
-POST /users/login
-
-Parameters: { userName, password }
-Response: { tbd }
-```
-
-## logout
-
-* Destroys the session on the server if it exists.
-
-```
-POST /users/logout
-Response: { tbd }
-```
 
 ## Votes
 
@@ -181,18 +194,10 @@ Response: { tbd }
 
 ## Comments
 
-* Add a comment to image. Requires active session.
-
-```
-POST /images/{id}/comments
-Parameters: { comment }
-Response: { tbd }
-```
-
 * Edit comment
 
 ```
-PUT /images/{id}/comments/{id}
+PUT /comments/{id}
 Parameters: { newComment }
 Response: { tbd }
 ```
@@ -200,30 +205,30 @@ Response: { tbd }
 * Remove comment from image 
 
 ```
-Delete /images/{id}/comments/{id}
+Delete /comments/{id}
 Parameters: { }
 Response: { tbd }
 ```
 
+# Depencies
 
-## Favorites
-
-* Add image to user favorites
-
-```
-POST /users/favorites
-Parameters: { imageId }
-Response: { tbd }
-```
-
-* Remove image from user favorites
-
-```
-DELETE /users/favorites/{id}
-Response: { tbd }
-```
+* Express 
+* Express-fileupload
+* Express-session
+* cors
+* Body-parser
+* express-validator/check
 
 # Report
+
+# Notes 
+
+## CSC Services
+
+* cPouta instance must be "medium"-size, small runs out of memory and services crash.
+* To access services via browser, http- and tcp-traffic must be allowed in security group rules.
+* Establishing shh-connection with virtual machine also requires the user account name, which [depends on the image used](https://docs.csc.fi/cloud/pouta/connecting-to-vm/), to gain access.
+
 
 ### Time Tracking
 
@@ -231,5 +236,7 @@ Response: { tbd }
 | --- | --- | --- |
 |14.03.| initial documentation | 2h |
 |26.03.| Database and api-documentation | 4h |
+|02.04.| Setting up cloud services | 8h |
+|03.04.| Backend / dokumentation | 6h |
 
-Total: 6h
+Total: 14h
