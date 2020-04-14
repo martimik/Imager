@@ -57,7 +57,7 @@ This repository contains "Coding REST API" assignment for TTOW0130 - Service-Ori
 
 Data is stored inside postgreSql database.
 
-![](db-schema.png)
+![](db-schema.PNG)
 
 # API Documentation
 
@@ -215,9 +215,14 @@ Response: { tbd }
 * Express 
 * Express-fileupload
 * Express-session
+* express-validator
+* pino
 * cors
-* Body-parser
-* express-validator/check
+* Sequalize
+* minio
+* command-line-args
+* basic-auth
+* Bcrypt
 
 # Report
 
@@ -238,5 +243,9 @@ Response: { tbd }
 |26.03.| Database and api-documentation | 4h |
 |02.04.| Setting up cloud services | 8h |
 |03.04.| Backend / dokumentation | 6h |
+|07.04.| Backend | 4h |
+|08.04.| Backend | 4h |
+|13.04.| Backend | 6h |
+|14.04.| Backend | 6h |
 
-Total: 14h
+Total: 40h

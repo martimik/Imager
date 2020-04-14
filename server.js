@@ -1,58 +1,49 @@
-const express = require("express");
-const fileUpload = require("express-fileupload");
-const session = require("express-session");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const { body } = require("express-validator/check");
+import express from "express";
+import fileUpload from "express-fileupload";
+import session from "express-session";
+import cors from "cors";
+
+import config from './config.js';
+import { SessionConfig } from "./utils.js";
+
+import { Database, seedIfNeeded } from "./database/index.js";
+
+/* ============= App setup ============= */
+
 const app = express();
 
-const config = require("./config");
-
-const CORS_ORIGIN = "http://localhost:3000";
-
-console.log("CORS ORIGIN:", CORS_ORIGIN);
-
-app.use(cors({ credentials: true, origin: CORS_ORIGIN }));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(cors({ credentials: true, origin: config.corsorigin }));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(fileUpload({ createParentPath: true }));
-app.use(session(config));
+app.use(session(SessionConfig));
 
-const PORT = 8080;
-const IP = "0.0.0.0";
+/* ============= Routes ============= */
 
-app.get("/", (req, res) => {
+import usersRouter from './routes/users.js'
+import imagesRouter from './routes/images.js'
+import commentsRouter from './routes/comments.js'
+
+app.use('/users', usersRouter);
+app.use('/images', imagesRouter);
+app.use('/comments', commentsRouter);
+
+/* ============= Test routes ============= */
+
+app.get("/test", (req, res) => {
     res.json({ message: "Ok" });
 });
 
 app.get("/session", (req, res) => {
     res.send({
-        name: req.session.name || "test",
-        email: req.session.email || "test",
-        userGroup: req.session.userGroup || "test"
+        name: req.session.name || "null",
+        email: req.session.email || "null",
+        userGroup: req.session.userGroup || "null"
     });
 });
 
-/* ============= Utils ============= */
+app.listen(config.port, config.ip);
+console.log("Server running on http://%s:%s", config.port, config.ip);
+console.log("CORS ORIGIN:", config.corsorigin);
 
-/* ============= Utils ============= */
-
-
-
-
-/* ============= Routes ============= */
-
-/* ============= Routes ============= */
-
-
-
-
-/* ============= Server ============= */
-
-/* ============= Server ============= */
-
-
-app.listen(PORT, IP);
-console.log("Server running on http://%s:%s", IP, PORT);
-
-module.exports = app;
+export default app;
