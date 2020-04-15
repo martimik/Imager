@@ -10,6 +10,9 @@ import { Database, seedIfNeeded } from "./database/index.js";
 
 /* ============= App setup ============= */
 
+Database.sync({ force: false })
+seedIfNeeded()
+
 const app = express();
 
 app.use(cors({ credentials: true, origin: config.corsorigin }));

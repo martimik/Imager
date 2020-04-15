@@ -26,14 +26,22 @@ try {
 
 export const User = UserModel(Database);
 
+export const createDB = async () => {
+
+}
+
 export const seedIfNeeded = async () => {
 
     const userCount = await User.count()
+    console.log("User Count: " + userCount);
+    
     if (userCount > 0) return
 
     const testuser = await User.create({
         username: 'testuser',
         password: Bcrypt.hashSync('testpass', 10),
+        email: 'test@email.com',
+        userGroup: 1
     })
 
     Logger.info('Seeded with test user:', testuser)

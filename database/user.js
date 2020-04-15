@@ -13,6 +13,7 @@ export default function (database) {
         },
         email: {
             type: Sequelize.TEXT,
+            unique: true,
             allowNull: false,
         },
         password: {

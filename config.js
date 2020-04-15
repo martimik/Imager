@@ -25,7 +25,7 @@ export default commandLineArgs([
     {
         name: 'pgdatabase',
         type: String,
-        defaultValue: process.env.PGDATABASE || 'imager', // update database name here
+        defaultValue: process.env.PGDATABASE || 'postgres', // update database name here
     },
     {
         name: 'pguser',

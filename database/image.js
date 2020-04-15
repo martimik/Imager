@@ -24,9 +24,5 @@ export default function (database) {
             type: Sequelize.BOOLEAN,
             allowNull: false,
         },
-        location: {
-            type: sequelize.TEXT,
-            allowNull: false,
-        },
     })
 }

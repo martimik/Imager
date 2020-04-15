@@ -3,60 +3,97 @@ import Auth from "basic-auth";
 import Bcrypt from 'bcrypt';
 import validator from "express-validator";
 import { User } from '../database/index.js';
+import { Logger } from "../utils.js";
 
 var router = express.Router();
 
 /* ============= /users ============= */
 
-router.post('/', function(req, res, next) {
-    res.end('users ok');
-});
+router.post('/', async(req, res, next) => {
 
-/* ============= /users/login ============= */
-
-router.post('/login', function(req, res, next) {
-
-    res.end("login ok");
-
-    const credentials = Auth(req);
-    
     try {
-        const userWithPassword = User.findOne({
+        
+        const emailCheck = await User.count({
             where: {
-                username: credentials.username,
-            },
-            rejectOnEmpty: true,
+                email: req.body.email,
+            }
         })
 
-        const validPassword = Bcrypt.compare(credentials.password, userWithPassword.password)
-
-        if (!validPassword) {
-            return h
-                .response({
-                    success: 'FALSE',
-                })
-                .code(403)
+        if(emailCheck > 0) {
+            res.setHeader("Content-Type", "application/json");
+            res.json({ error: 'Email already in use.' })
         }
+        else {
 
-        const userWithoutPassword = User.scope('withoutPassword')
-            .findByPk(userWithPassword.id)
+            const newUser = await User.create({
+                username: req.body.username,
+                password: Bcrypt.hashSync(req.body.password, 10),
+                email: req.body.email,
+                userGroup: req.body.userGroup
+            })
 
-        req.session.name = userWithoutPassword.name;
-        req.session.email = userWithoutPassword.email;
-        req.session.userGroup = userWithoutPassword.userGroup;
+            Logger.info('User registered: ' + newUser.username, newUser)
 
-        res.send({
-            name: req.session.name,
-            email: req.session.email,
-            userGroup: req.session.userGroup
-        });
+            res.setHeader("Content-Type", "application/json");
+            res.json({ success: 'User ' +  newUser.username + " registered."})
+        }
         
     } catch (error) {
 
         Logger.error(error);
 
-        res.send({
-            success: "False",
+        res.setHeader("Content-Type", "application/json");
+        res.json({ error: 'Catch error.' })
+    }
+});
+
+/* ============= /users/login ============= */
+
+router.post('/login', async(req, res, next) => {
+
+    const credentials = Auth(req);
+    
+    try {
+        const userWithPassword = await User.findOne({
+            where: {
+                username: credentials.name,
+            }
+        })
+
+        if(!userWithPassword){
+            res.setHeader("Content-Type", "application/json");
+            res.json({ error: 'User does not exist.' })
+        }
+        else {
+
+            const validPassword = Bcrypt.compareSync(credentials.pass, userWithPassword.password)
+
+            if (!validPassword) {
+                res.setHeader("Content-Type", "application/json");
+                res.json({ error: 'Invalid password.' })
+            }
+            else {
+                const userWithoutPassword = await User.scope('withoutPassword').findByPk(userWithPassword.id)
+
+                req.session.name = userWithoutPassword.username;
+                req.session.email = userWithoutPassword.email;
+                req.session.userGroup = userWithoutPassword.userGroup;
+
+                res.setHeader("Content-Type", "application/json");
+                res.json({
+                    name: req.session.name,
+                    email: req.session.email,
+                    userGroup: req.session.userGroup
+                });
+            }
+        }     
+    } catch (error) {
+
+        Logger.error(error);
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({
+            error: "Catch error",
         });
     }
 });
@@ -64,7 +101,26 @@ router.post('/login', function(req, res, next) {
 /* ============= /users/logout ============= */
 
 router.post('/logout', function(req, res, next) {
-    res.end('logout ok');
+
+    if (req.session) {
+        req.session.destroy(err => {
+            if (err) {
+                Logger.error(err);
+                next(err);
+            } else {
+                req.session = null;
+                res.setHeader("Content-Type", "application/json");
+                res.send({
+                    name: null,
+                    email: null,
+                    userGroup: null
+                });
+            }
+        });
+    } else {
+        res.setHeader("Content-Type", "application/json");
+        res.send(JSON.stringify({ error: "Session does not exist." }));
+    }
 });
 
 /* ============= /users/favorites ============= */
