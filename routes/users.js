@@ -1,15 +1,39 @@
 import express from 'express';
+import Validator from 'express-validator';
 import Auth from "basic-auth";
 import Bcrypt from 'bcrypt';
-import validator from "express-validator";
-import { User } from '../database/index.js';
-import { Logger } from "../utils.js";
+import Sequelize from 'sequelize';
+import { User, Image, Favorite } from '../database/index.js';
+import { Logger, validate, authenticate } from "../utils.js";
+
+const { check, validationResult } = Validator;
 
 var router = express.Router();
 
 /* ============= /users ============= */
 
-router.post('/', async(req, res, next) => {
+router.post('/',
+[
+    check("username")
+        .isLength({ min: 1 })
+        .isString()
+        .escape(),
+    check("email")
+        .isLength({ min: 1 })
+        .isString()
+        .isEmail()
+        .escape(),
+    check("password")
+        .isLength({ min: 1 })
+        .isString()
+        .escape(),
+    check("userGroup")
+        .isLength({ min: 1, max: 1 })
+        .isInt()
+        .escape()
+],
+validate,
+async(req, res, next) => {
 
     try {
         
@@ -32,10 +56,10 @@ router.post('/', async(req, res, next) => {
                 userGroup: req.body.userGroup
             })
 
-            Logger.info('User registered: ' + newUser.username, newUser)
+            Logger.info('User registered: ' + newUser.id, newUser)
 
             res.setHeader("Content-Type", "application/json");
-            res.json({ success: 'User ' +  newUser.username + " registered."})
+            res.json({ success: 'User ' +  newUser.username + " was successfully registered."})
         }
         
     } catch (error) {
@@ -43,7 +67,7 @@ router.post('/', async(req, res, next) => {
         Logger.error(error);
 
         res.setHeader("Content-Type", "application/json");
-        res.json({ error: 'Catch error.' })
+        res.json({ error: error })
     }
 });
 
@@ -56,7 +80,7 @@ router.post('/login', async(req, res, next) => {
     try {
         const userWithPassword = await User.findOne({
             where: {
-                username: credentials.name,
+                email: credentials.name,
             }
         })
 
@@ -75,12 +99,14 @@ router.post('/login', async(req, res, next) => {
             else {
                 const userWithoutPassword = await User.scope('withoutPassword').findByPk(userWithPassword.id)
 
+                req.session.userId = userWithoutPassword.id;
                 req.session.name = userWithoutPassword.username;
                 req.session.email = userWithoutPassword.email;
                 req.session.userGroup = userWithoutPassword.userGroup;
 
                 res.setHeader("Content-Type", "application/json");
                 res.json({
+                    userId: userWithoutPassword.id,
                     name: req.session.name,
                     email: req.session.email,
                     userGroup: req.session.userGroup
@@ -125,18 +151,143 @@ router.post('/logout', function(req, res, next) {
 
 /* ============= /users/favorites ============= */
 
-router.get('/favorites', function(req, res, next) {
-    res.end('favorites ok');
+/* GET user favorites */
+
+router.get('/favorites',
+authenticate,
+async(req, res, next) => {
+    
+    try{
+        const favorites = await Favorite.findAll({      
+            where: {
+                userId: req.session.userId
+            }
+        });
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ favorites });
+
+    } catch (error) {
+        Logger.error(error);
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ error: error })
+    }
+
 });
 
-router.post('/favorites', function(req, res, next) {
-    res.end('favorites ok');
+/* POST add new image to user favorites */
+
+router.post('/favorites', 
+[
+    check("imageId")
+        .isLength({ min: 1 })
+        .isString()
+        .escape(),
+],
+validate,
+authenticate,
+async(req, res, next) => {
+
+    try {
+
+        const image = await Image.findOne({
+            where: {
+                id: req.body.imageId,
+            }
+        })
+
+        if(!image) {
+            res.setHeader("Content-Type", "application/json");
+            res.json({ error: 'Image does not exist.' });
+        }
+
+        const newFavorite = await Favorite.create({
+            userId: req.session.userId,
+            imageId: req.body.imageId,
+        })
+
+        //
+        Logger.info('Favorite ' + newFavorite.imageId  + ' inserted into database.')
+        res.setHeader("Content-Type", "application/json");
+        res.json({ success: 'Image ' + newFavorite.imageId + " added to favorites successfully."})
+
+    } catch (error) {
+        Logger.error(error);
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ error: error })
+    }
 });
 
 /* ============= /users/favorites/{id} ============= */
 
-router.delete('/favorites', function(req, res, next) {
-    res.end('favorites ok');
+router.delete('/favorites/:id', 
+[
+    check("id")
+        .isLength({ min: 1 })
+        .isString()
+        .escape(),
+],
+validate,
+authenticate,
+async(req, res, next) => {
+
+    try {
+
+        const favorite = await Favorite.findOne({
+            where: {
+                userId: req.session.userId,
+                imageId: req.params.id,    
+            }
+        })
+
+        if(!favorite) {
+            res.setHeader("Content-Type", "application/json");
+            res.json({ error: 'Image not in favorites.' });
+        }
+
+        favorite.destroy();
+
+        Logger.info('User ' + req.session.userId + ' removed Image ' + image.id, image + ' from favorites.')
+        res.setHeader("Content-Type", "application/json");
+        res.json({ success: 'Image removed from favorites successfully.'});
+
+    } catch (error) {
+        Logger.error(error);
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ error: error })
+    }
 });
+
+/* ============= /users/private ============= */
+
+/* GET private images */
+
+router.get('/private', 
+authenticate,
+async(req, res, next) => {
+    
+    try{
+        const images = await Image.findAll({
+            where: {
+                isprivate: true,
+                userId: req.session.userId
+            }
+        });
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ images });
+
+    } catch (error) {
+        Logger.error(error);
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ error: error })
+    }
+
+});
+
   
 export default router

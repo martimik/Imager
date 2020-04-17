@@ -1,5 +1,8 @@
 import Pino from 'pino';
 import Minio from 'minio';
+import Validator from 'express-validator';
+
+const { check, validationResult } = Validator;
 
 export const DBLogger = Pino({
     name: 'Database',
@@ -15,9 +18,9 @@ export const Logger = Pino({
 
 
 export const MinioClient = new Minio.Client({
-    endPoint: '86.50.253.134',
-    port: 9000,
-    useSSL: true,
+    endPoint: 'minio.imager.local',
+    //port: 9000,
+    useSSL: false,
     accessKey: 'minio',
     secretKey: 'minio123'
 });
@@ -31,6 +34,26 @@ export const SessionConfig = {
     cookie: {
         httpOnly: true,
         maxAge: 1000 * 60 * 30 // 30 minutes
+    }
+};
+
+export function validate (req, res, next) {
+    if (!validationResult(req).isEmpty()) {
+        Logger.error(validationResult(req));
+        res.setHeader("Content-Type", "application/json");
+        res.send({ error: "Invalid data"});
+    } else {
+        next();
+    }
+}
+
+export function authenticate (req, res, next) {
+    if (req.session.userGroup != 0 && req.session.userGroup != 1) {
+        res.setHeader("Content-Type", "application/json");
+        res.status(401);
+        res.send({ message: "Unauthorized"});
+    } else {
+        next();
     }
 };
 

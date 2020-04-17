@@ -7,16 +7,7 @@ export default function (database) {
             primaryKey: true,
             defaultValue: Sequelize.UUIDV4,
         },
-        userId: {
-            type: Sequelize.UUID,
-            foreingKey: true,
-            allowNull: false,
-        },
         title: {
-            type: Sequelize.TEXT,
-            allowNull: false,
-        },
-        uploadDate: {
             type: Sequelize.TEXT,
             allowNull: false,
         },

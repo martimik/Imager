@@ -10,15 +10,16 @@ import { Database, seedIfNeeded } from "./database/index.js";
 
 /* ============= App setup ============= */
 
-Database.sync({ force: false })
-seedIfNeeded()
+//Database.drop();
+Database.sync({ force: false });
+seedIfNeeded();
 
 const app = express();
 
 app.use(cors({ credentials: true, origin: config.corsorigin }));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(fileUpload({ createParentPath: true }));
+app.use(fileUpload({ useTempFiles: true, tempFileDir : '/tmp/' }));
 app.use(session(SessionConfig));
 
 /* ============= Routes ============= */
@@ -39,9 +40,10 @@ app.get("/test", (req, res) => {
 
 app.get("/session", (req, res) => {
     res.send({
-        name: req.session.name || "null",
-        email: req.session.email || "null",
-        userGroup: req.session.userGroup || "null"
+        userId: req.session.userId,
+        name: req.session.name,
+        email: req.session.email,
+        userGroup: req.session.userGroup
     });
 });
 

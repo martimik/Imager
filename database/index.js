@@ -2,6 +2,8 @@ import Sequelize from "sequelize";
 import Bcrypt from 'bcrypt';
 
 import UserModel from "./user.js";
+import ImageModel from "./image.js";
+import FavoriteModel from './favorite.js'
 
 import Config from '../config.js';
 import { DBLogger, Logger } from "../utils.js";
@@ -18,23 +20,31 @@ export const Database = new Sequelize({
 
 try {
     Database.authenticate();
-    console.log('Connection has been established successfully.');
+    console.log('DB connection has been established successfully.');
 } catch (error) {
     console.error('Unable to connect to the database:', error);
 }
 
-
 export const User = UserModel(Database);
+export const Image = ImageModel(Database);
+export const Favorite = FavoriteModel(Database);
 
-export const createDB = async () => {
+User.hasMany(Image);
+Image.belongsTo(User);
 
-}
+User.hasMany(Favorite);
+Favorite.belongsTo(User);
+
+Image.hasMany(Favorite);
+Favorite.belongsTo(Image);
 
 export const seedIfNeeded = async () => {
 
     const userCount = await User.count()
     console.log("User Count: " + userCount);
-    
+    console.log("Image count: " + await Image.count());
+    console.log("Favorite count: " + await Favorite.count());
+
     if (userCount > 0) return
 
     const testuser = await User.create({
@@ -44,7 +54,7 @@ export const seedIfNeeded = async () => {
         userGroup: 1
     })
 
-    Logger.info('Seeded with test user:', testuser)
+    Logger.info('Seeded with test user', testuser)
 }
 
 export default Database

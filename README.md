@@ -16,9 +16,9 @@ This repository contains "Coding REST API" assignment for TTOW0130 - Service-Ori
 
 |Feature|status|
 |-------|------|
-|Ability to upload a new image | Not implemented |
-|Ability to list uploaded images | Not implemented |
-|Ability to remove an uploaded image | Not implemented |
+|Ability to upload a new image | OK |
+|Ability to list uploaded images | OK |
+|Ability to remove an uploaded image | OK |
 |Ability to vote (upvote, downvote) an image | Not implemented |
 |Ability to mark image as a favorite or remove it | Not implemented |
 |Ability to comment on a image |Not implemented |
@@ -28,8 +28,8 @@ This repository contains "Coding REST API" assignment for TTOW0130 - Service-Ori
 
 |Feature|status|
 |-------|------|
-|Ability to create a user / register | Not implemented |
-|Ability to login and logout | Not implemented |
+|Ability to create a user / register | OK |
+|Ability to login and logout | OK |
 |Able to list most "trending" images | Not implemented |
 |Logging is done to an external logging server | Not implemented |
 
@@ -40,8 +40,8 @@ This repository contains "Coding REST API" assignment for TTOW0130 - Service-Ori
 |API contains tests | Not implemented |
 |Ability to download favorites as a zip / export | Not implemented |
 |Login using a Google / Facebook / etc. account | Not implemented |
-|Multiple user levels (admin, normal user, anonymous) | Not implemented |
-|Public (shows up in recent uploads) and private (only visible to self) gallery | Not implemented |
+|Multiple user levels (admin, normal user, anonymous) | OK |
+|Public (shows up in recent uploads) and private (only visible to self) gallery | OK |
 |Report this image feature | Not implemented |
 
 ### Special requirements
@@ -68,7 +68,7 @@ Usergroups are used to control the usage of API features. Valid usergroups are:
 ```
     0: Admin
     1: Normal user
-    2: Anonymous
+    (2: Anonymous)
 ```
 
 Resource URIs
@@ -79,6 +79,7 @@ Resource URIs
 /users/logout
 /users/favorites
 /users/favorites/{id}
+/users/private
 
 /images
 /images/{id}
@@ -96,7 +97,7 @@ Resource URIs
 POST /users
 
 Parameters: { userName, password, email }
-Response: { tbd }
+Response: { success }
 ```
 
 ## Login
@@ -106,8 +107,8 @@ Response: { tbd }
 ```
 POST /users/login
 
-Parameters: { userName, password }
-Response: { tbd }
+Parameters as basic-auth: { email, password }
+Response: { userId, name, email, userGroup }
 ```
 
 ## logout
@@ -116,7 +117,7 @@ Response: { tbd }
 
 ```
 POST /users/logout
-Response: { tbd }
+Response: { success }
 ```
 
 ## Favorites
@@ -126,7 +127,7 @@ Response: { tbd }
 ```
 GET /users/favorites
 Parameters: { userId }
-Response: { tbd }
+Response: { [ image ] }
 ```
 
 * Add image to user favorites
@@ -134,14 +135,24 @@ Response: { tbd }
 ```
 POST /users/favorites
 Parameters: { imageId }
-Response: { tbd }
+Response: { success }
 ```
 
 * Remove image from user favorites
 
 ```
 DELETE /users/favorites/{id}
-Response: { tbd }
+Response: { success }
+```
+
+## Private 
+
+* Get user private images
+
+```
+GET /users/private
+Parameters: {  }
+Response: { [ image ] }
 ```
 
 ## Images
@@ -152,16 +163,16 @@ Response: { tbd }
 POST /images
 
 Parameters: { title, isPrivate, imgFile }
-Response: { tbd }
+Response: { success }
 ```
 
-* Return all images that match the search criteria.
+* Return all images, exlude other users private images.
 
 ```
 GET /images
 
-Parameters: { uploader }
-Response: [ {image} ]
+Parameters: {  }
+Response: { [ image ] }
 ```
 
 * Return a specific image.
@@ -170,7 +181,7 @@ Response: [ {image} ]
 GET /images/{id}
 
 Parameters: { }
-Response: [ {image} ]
+Response: { image }
 ```
 
 * Add a comment to image.
@@ -210,6 +221,17 @@ Parameters: { }
 Response: { tbd }
 ```
 
+## Test Routes
+
+* Returns active session data
+
+```
+GET /session
+Parameters: {}
+Response: { userId, name, email, userGroup }
+
+```
+
 # Depencies
 
 * Express 
@@ -247,5 +269,8 @@ Response: { tbd }
 |08.04.| Backend | 4h |
 |13.04.| Backend | 6h |
 |14.04.| Backend | 6h |
+|15.04.| Backend | 6h |
+|16.04.| Backend | 6h |
+|17.04.| Backend | 10h |
 
-Total: 40h
+Total: 62h
