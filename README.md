@@ -272,5 +272,6 @@ Response: { userId, name, email, userGroup }
 |15.04.| Backend | 6h |
 |16.04.| Backend | 6h |
 |17.04.| Backend | 10h |
+|20.04.| Backend | 1h |
 
 Total: 62h

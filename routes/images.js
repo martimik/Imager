@@ -1,6 +1,7 @@
 import express from 'express';
 import Validator from 'express-validator';
 import Sequelize from 'sequelize';
+import Fs from 'fs';
 import { Image } from '../database/index.js';
 import { Logger, MinioClient, validate, authenticate } from "../utils.js";
 
@@ -47,6 +48,9 @@ async(req, res, next) => {
         });
 
         await newImage.save();
+
+        // Delete temp file created by express file-upload
+        Fs.unlinkSync(file)
 
         Logger.info('Image ' + newImage.id, newImage + ' inserted into database.')
         res.setHeader("Content-Type", "application/json");
