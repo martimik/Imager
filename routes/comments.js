@@ -8,7 +8,7 @@ const { check, validationResult } = Validator;
 
 var router = express.Router();
 
-/* ============= /comments/{id} ============= */
+/* ======================================= /comments/{id} ======================================= */
 
 /* PUT edit comment by id */
 

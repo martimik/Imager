@@ -1,14 +1,14 @@
 import express from 'express';
 import Validator from 'express-validator';
 import Fs from 'fs';
-import { Image, Comment } from '../database/index.js';
+import { Image, Comment, Report } from '../database/index.js';
 import { Logger, MinioClient, validate, authenticate } from "../utils.js";
 
 const { check, validationResult } = Validator;
 
 var router = express.Router();
 
-/* ============= /images ============= */
+/* ======================================= /images ======================================= */
 
 /* POST new image */
 
@@ -88,7 +88,7 @@ async(req, res, next) => {
 
 });
 
-/* ============= /images/{id} ============= */
+/* ======================================= /images/{id} ======================================= */
 
 /* GET specific image file with id */
 
@@ -188,7 +188,7 @@ async(req, res, next) => {
     }
 });
 
-/* ============= /images/{id}/comments ============= */
+/* ======================================= /images/{id}/comments ======================================= */
 
 /* GET all comments of specific image */
 
@@ -271,7 +271,7 @@ async(req, res, next) => {
     }
 });
 
-/* ============= /images/{id}/votes ============= */
+/* ======================================= /images/{id}/votes ======================================= */
 
 /* POST new comment for image */
 
@@ -283,6 +283,96 @@ router.post('/:id/votes', function(req, res, next) {
 
 router.get('/:id/votes', function(req, res, next) {
     res.end('/{id}/votes post ok');
+});
+
+/* ======================================= /images/{id}/reports ======================================= */
+
+/* GET all reports submitted to specific image */
+
+router.get('/:id/reports', 
+[
+    check("id")
+        .isLength({ min: 1 })
+        .isString()
+        .escape(),
+],
+validate,
+authenticate,
+async(req, res, next) => {
+    
+    try{
+        const reports = await Report.findAll({      
+        where: {
+            imageId: req.params.id,
+        }
+        });
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ reports });
+
+    } catch (error) {
+        Logger.error(error);
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ error: error })
+    }
+
+});
+
+/* POST submit a report of image */
+
+router.post('/:id/reports', 
+[
+    check("id")
+        .isLength({ min: 1 })
+        .isString()
+        .escape(),
+    check("description")
+        .isLength({ min: 1 })
+        .isString()
+        .escape(),
+],
+validate,
+authenticate,
+async(req, res, next) => {
+
+    try {
+
+        const image = await Image.findOne({
+            where: {
+                id: req.params.id,
+            }
+        })
+
+        if(!image) {
+            res.setHeader("Content-Type", "application/json");
+            res.json({ error: 'Image does not exist.' });
+        }
+        
+        const newReport = await Report.create({
+            userId: req.session.userId,
+            imageId: req.params.id,
+            description: req.body.description,
+        })
+
+        Logger.info('Report ' + newReport.id  + ' inserted into database.')
+        res.setHeader("Content-Type", "application/json");
+        res.json({ success: 'Report ' + newReport.id + " submitted successfully."})
+
+    } catch (error) {
+    
+        if(error.name == "SequelizeUniqueConstraintError"){
+            Logger.error("Report already submitted for image.");
+
+            res.setHeader("Content-Type", "application/json");
+            res.json({ error: "Report already submitted for image." });
+        }
+
+        Logger.error(error);
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ error: error });
+    }
 });
 
 export default router

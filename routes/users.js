@@ -10,7 +10,7 @@ const { check, validationResult } = Validator;
 
 var router = express.Router();
 
-/* ============= /users ============= */
+/* ======================================= /users ======================================= */
 
 router.post('/',
 [
@@ -71,7 +71,7 @@ async(req, res, next) => {
     }
 });
 
-/* ============= /users/login ============= */
+/* ======================================= /users/login ======================================= */
 
 router.post('/login', async(req, res, next) => {
 
@@ -124,7 +124,7 @@ router.post('/login', async(req, res, next) => {
     }
 });
 
-/* ============= /users/logout ============= */
+/* ======================================= /users/logout ======================================= */
 
 router.post('/logout', function(req, res, next) {
 
@@ -149,7 +149,7 @@ router.post('/logout', function(req, res, next) {
     }
 });
 
-/* ============= /users/favorites ============= */
+/* ======================================= /users/favorites ======================================= */
 
 /* GET user favorites */
 
@@ -227,7 +227,7 @@ async(req, res, next) => {
     }
 });
 
-/* ============= /users/favorites/{id} ============= */
+/* ======================================= /users/favorites/{id} ======================================= */
 
 router.delete('/favorites/:id', 
 [
@@ -266,7 +266,7 @@ async(req, res, next) => {
     }
 });
 
-/* ============= /users/private ============= */
+/* ======================================= /users/private ======================================= */
 
 /* GET private images */
 

@@ -42,7 +42,7 @@ This repository contains "Coding REST API" assignment for TTOW0130 - Service-Ori
 |Login using a Google / Facebook / etc. account | Not implemented |
 |Multiple user levels (admin, normal user, anonymous) | OK |
 |Public (shows up in recent uploads) and private (only visible to self) gallery | OK |
-|Report this image feature | Not implemented |
+|Report this image feature | OK |
 
 ### Special requirements
 
@@ -85,13 +85,14 @@ Resource URIs
 /images/{id}
 /images/{id}/votes
 /images/{id}/comments
+/images/{id}/reports
 
 /comments/{id}
 
-/reports/{id}
+/reports
 ```
 
-## Users
+# Users
 
 * Create a new user to the database if the given email is not already in use. Usergroup always defaults to normal user.
 
@@ -99,6 +100,7 @@ Resource URIs
 POST /users
 
 Parameters: { userName, password, email }
+
 Response: { success }
 ```
 
@@ -110,6 +112,7 @@ Response: { success }
 POST /users/login
 
 Parameters as basic-auth: { email, password }
+
 Response: { userId, name, email, userGroup }
 ```
 
@@ -119,6 +122,7 @@ Response: { userId, name, email, userGroup }
 
 ```
 POST /users/logout
+
 Response: { success }
 ```
 
@@ -128,7 +132,9 @@ Response: { success }
 
 ```
 GET /users/favorites
+
 Parameters: { userId }
+
 Response: { [ image ] }
 ```
 
@@ -136,7 +142,9 @@ Response: { [ image ] }
 
 ```
 POST /users/favorites
+
 Parameters: { imageId }
+
 Response: { success }
 ```
 
@@ -144,6 +152,7 @@ Response: { success }
 
 ```
 DELETE /users/favorites/{id}
+
 Response: { success }
 ```
 
@@ -153,11 +162,11 @@ Response: { success }
 
 ```
 GET /users/private
-Parameters: {  }
+
 Response: { [ image ] }
 ```
 
-## Images
+# Images
 
 * Upload new image to the service. Requires an active user session.
 
@@ -165,6 +174,7 @@ Response: { [ image ] }
 POST /images
 
 Parameters: { title, isPrivate, imgFile }
+
 Response: { success }
 ```
 
@@ -173,7 +183,6 @@ Response: { success }
 ```
 GET /images
 
-Parameters: {  }
 Response: { [ image ] }
 ```
 
@@ -182,25 +191,27 @@ Response: { [ image ] }
 ```
 GET /images/{id}
 
-Parameters: { }
 Response: { image }
 ```
+
+## Comments
 
 * Add a comment to image.
 
 ```
 POST /images/{id}/comments
+
 Parameters: { content }
+
 Response: { success }
 ```
 
 * Get comments of a image.
 ```
 GET /images/{id}/comments
-Parameters: { }
+
 Response: { [ Comment ] }
 ```
-
 
 ## Votes
 
@@ -208,17 +219,41 @@ Response: { [ Comment ] }
 
 ```
 POST /images/{id}/votes
+
 Parameters: { type }
+
 Response: { tbd }
 ```
 
-## Comments
+## reports
+
+* Add a report to image.
+
+```
+POST /images/{id}/reports
+
+Parameters: { description }
+
+Response: { success }
+```
+
+* Get reports of a image.
+```
+GET /images/{id}/reports
+
+Response: { [ Report ] }
+```
+
+
+# Comments
 
 * Edit comment
 
 ```
 PUT /comments/{id}
+
 Parameters: { newComment }
+
 Response: { success }
 ```
 
@@ -226,11 +261,22 @@ Response: { success }
 
 ```
 Delete /comments/{id}
-Parameters: { }
+
 Response: { success }
 ```
 
-## Test Routes
+# Reports
+
+* Return all reports in database
+
+```
+GET /reports
+
+Response: { [ Report ] }
+
+```
+
+# Test Routes
 
 * Returns active session data
 

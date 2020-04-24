@@ -27,10 +27,12 @@ app.use(session(SessionConfig));
 import usersRouter from './routes/users.js'
 import imagesRouter from './routes/images.js'
 import commentsRouter from './routes/comments.js'
+import reportsRouter from './routes/reports.js'
 
 app.use('/users', usersRouter);
 app.use('/images', imagesRouter);
 app.use('/comments', commentsRouter);
+app.use('/reports', reportsRouter);
 
 /* ============= Test routes ============= */
 

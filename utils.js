@@ -37,6 +37,7 @@ export const SessionConfig = {
     }
 };
 
+/* Middleware to valitade request parameters and/or form data */
 export function validate (req, res, next) {
     if (!validationResult(req).isEmpty()) {
         Logger.error(validationResult(req));
@@ -47,6 +48,7 @@ export function validate (req, res, next) {
     }
 }
 
+/* Middleware to authenticate user through session parameters */ 
 export function authenticate (req, res, next) {
     if (req.session.userGroup != 0 && req.session.userGroup != 1) {
         res.setHeader("Content-Type", "application/json");
