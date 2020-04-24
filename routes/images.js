@@ -1,8 +1,7 @@
 import express from 'express';
 import Validator from 'express-validator';
-import Sequelize from 'sequelize';
 import Fs from 'fs';
-import { Image } from '../database/index.js';
+import { Image, Comment } from '../database/index.js';
 import { Logger, MinioClient, validate, authenticate } from "../utils.js";
 
 const { check, validationResult } = Validator;
@@ -191,15 +190,99 @@ async(req, res, next) => {
 
 /* ============= /images/{id}/comments ============= */
 
-router.post('/:id/comments', function(req, res, next) {
-    res.end('/{id}/comments post ok');
+/* GET all comments of specific image */
+
+router.get('/:id/comments', 
+[
+    check("id")
+        .isLength({ min: 1 })
+        .isString()
+        .escape(),
+],
+validate,
+authenticate,
+async(req, res, next) => {
+    
+    try{
+        const comments = await Comment.findAll({      
+        where: {
+            imageId: req.params.id,
+        }
+        });
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ comments });
+
+    } catch (error) {
+        Logger.error(error);
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ error: error })
+    }
+
+});
+
+/* POST new comment to specific image */
+
+router.post('/:id/comments',
+[
+    check("id")
+        .isLength({ min: 1 })
+        .isString()
+        .escape(),
+    check("content")
+        .isLength({ min: 1 })
+        .isString()
+        .escape(),
+],
+validate,
+authenticate,
+async(req, res, next) => {
+
+    try {
+
+        const image = await Image.findOne({
+            where: {
+                id: req.params.id,
+            }
+        })
+
+        if(!image) {
+            res.setHeader("Content-Type", "application/json");
+            res.json({ error: 'Image does not exist.' });
+        }
+
+        const newComment = await Comment.create({
+            imageId: req.params.id,
+            userId: req.session.userId,
+            content: req.body.content,
+        })
+        
+        Logger.info('New commend created. Comment id: ' + newComment.id + ', image id: ' + newComment.imageId + ', uploader id: ' + newComment.userId )
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ success: "Comment succeffully created."})
+
+    } catch (error) {
+        Logger.error(error);
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ error: error })
+    }
 });
 
 /* ============= /images/{id}/votes ============= */
+
+/* POST new comment for image */
 
 router.post('/:id/votes', function(req, res, next) {
     res.end('/{id}/votes post ok');
 });
 
+/* GET image comment */
+
+router.get('/:id/votes', function(req, res, next) {
+    res.end('/{id}/votes post ok');
+});
 
 export default router

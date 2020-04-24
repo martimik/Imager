@@ -15,19 +15,19 @@ This repository contains "Coding REST API" assignment for TTOW0130 - Service-Ori
 ### Core API functionality
 
 |Feature|status|
-|-------|------|
+|-------|:------:|
 |Ability to upload a new image | OK |
 |Ability to list uploaded images | OK |
 |Ability to remove an uploaded image | OK |
 |Ability to vote (upvote, downvote) an image | Not implemented |
-|Ability to mark image as a favorite or remove it | Not implemented |
-|Ability to comment on a image |Not implemented |
-|Ability to edit or remove comments | Not implemented |
+|Ability to mark image as a favorite or remove it | OK |
+|Ability to comment on a image | OK |
+|Ability to edit or remove comments | OK |
 
 ### Advanced API functionality
 
 |Feature|status|
-|-------|------|
+|-------|:------:|
 |Ability to create a user / register | OK |
 |Ability to login and logout | OK |
 |Able to list most "trending" images | Not implemented |
@@ -36,7 +36,7 @@ This repository contains "Coding REST API" assignment for TTOW0130 - Service-Ori
 ### Extra credits
 
 |Feature|status|
-|-------|------|
+|-------|:------:|
 |API contains tests | Not implemented |
 |Ability to download favorites as a zip / export | Not implemented |
 |Login using a Google / Facebook / etc. account | Not implemented |
@@ -47,7 +47,7 @@ This repository contains "Coding REST API" assignment for TTOW0130 - Service-Ori
 ### Special requirements
 
 |Feature|status|
-|-------|------|
+|-------|:------:|
 |Usage of Gitlab CI to build a docker image of the API and upload it to Gitlab container registry | Not implemented |
 |Creating a docker-compose.yaml file with the appropriate environment | Not implemented |
 
@@ -87,6 +87,8 @@ Resource URIs
 /images/{id}/comments
 
 /comments/{id}
+
+/reports/{id}
 ```
 
 ## Users
@@ -188,8 +190,15 @@ Response: { image }
 
 ```
 POST /images/{id}/comments
-Parameters: { comment }
-Response: { tbd }
+Parameters: { content }
+Response: { success }
+```
+
+* Get comments of a image.
+```
+GET /images/{id}/comments
+Parameters: { }
+Response: { [ Comment ] }
 ```
 
 
@@ -210,7 +219,7 @@ Response: { tbd }
 ```
 PUT /comments/{id}
 Parameters: { newComment }
-Response: { tbd }
+Response: { success }
 ```
 
 * Remove comment from image 
@@ -218,7 +227,7 @@ Response: { tbd }
 ```
 Delete /comments/{id}
 Parameters: { }
-Response: { tbd }
+Response: { success }
 ```
 
 ## Test Routes
@@ -272,6 +281,6 @@ Response: { userId, name, email, userGroup }
 |15.04.| Backend | 6h |
 |16.04.| Backend | 6h |
 |17.04.| Backend | 10h |
-|20.04.| Backend | 1h |
+|21.04.| Backend | 5h |
 
-Total: 62h
+Total: 66h

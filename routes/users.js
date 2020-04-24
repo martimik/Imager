@@ -201,22 +201,29 @@ async(req, res, next) => {
             res.setHeader("Content-Type", "application/json");
             res.json({ error: 'Image does not exist.' });
         }
-
+        
         const newFavorite = await Favorite.create({
             userId: req.session.userId,
             imageId: req.body.imageId,
         })
 
-        //
         Logger.info('Favorite ' + newFavorite.imageId  + ' inserted into database.')
         res.setHeader("Content-Type", "application/json");
         res.json({ success: 'Image ' + newFavorite.imageId + " added to favorites successfully."})
 
     } catch (error) {
+    
+        if(error.name == "SequelizeUniqueConstraintError"){
+            Logger.error("Image already in user favorites.");
+
+            res.setHeader("Content-Type", "application/json");
+            res.json({ error: "Image already in favorites." });
+        }
+
         Logger.error(error);
 
         res.setHeader("Content-Type", "application/json");
-        res.json({ error: error })
+        res.json({ error: error });
     }
 });
 
@@ -234,14 +241,12 @@ authenticate,
 async(req, res, next) => {
 
     try {
-
         const favorite = await Favorite.findOne({
             where: {
                 userId: req.session.userId,
                 imageId: req.params.id,    
             }
         })
-
         if(!favorite) {
             res.setHeader("Content-Type", "application/json");
             res.json({ error: 'Image not in favorites.' });
@@ -249,7 +254,7 @@ async(req, res, next) => {
 
         favorite.destroy();
 
-        Logger.info('User ' + req.session.userId + ' removed Image ' + image.id, image + ' from favorites.')
+        Logger.info('User ' + req.session.userId + ' removed Image ' + req.params.id + ' from favorites.')
         res.setHeader("Content-Type", "application/json");
         res.json({ success: 'Image removed from favorites successfully.'});
 

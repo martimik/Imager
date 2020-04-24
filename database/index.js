@@ -3,7 +3,7 @@ import Bcrypt from 'bcrypt';
 
 import UserModel from "./user.js";
 import ImageModel from "./image.js";
-import FavoriteModel from './favorite.js'
+import CommentModel from "./comment.js";
 
 import Config from '../config.js';
 import { DBLogger, Logger } from "../utils.js";
@@ -27,16 +27,20 @@ try {
 
 export const User = UserModel(Database);
 export const Image = ImageModel(Database);
-export const Favorite = FavoriteModel(Database);
+export const Comment = CommentModel(Database);
+
+export const Favorite = Database.define('favorite', {});
 
 User.hasMany(Image);
 Image.belongsTo(User);
 
-User.hasMany(Favorite);
-Favorite.belongsTo(User);
+User.belongsToMany(Image, { through: Favorite });
+Image.belongsToMany(User, { through: Favorite });
 
-Image.hasMany(Favorite);
-Favorite.belongsTo(Image);
+User.hasMany(Comment);
+Image.hasMany(Comment);
+
+
 
 export const seedIfNeeded = async () => {
 
@@ -44,6 +48,7 @@ export const seedIfNeeded = async () => {
     console.log("User Count: " + userCount);
     console.log("Image count: " + await Image.count());
     console.log("Favorite count: " + await Favorite.count());
+    console.log("Comment count: " + await Comment.count());
 
     if (userCount > 0) return
 
