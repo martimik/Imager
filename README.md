@@ -19,7 +19,7 @@ This repository contains "Coding REST API" assignment for TTOW0130 - Service-Ori
 |Ability to upload a new image | OK |
 |Ability to list uploaded images | OK |
 |Ability to remove an uploaded image | OK |
-|Ability to vote (upvote, downvote) an image | Not implemented |
+|Ability to vote (upvote, downvote) an image | OK |
 |Ability to mark image as a favorite or remove it | OK |
 |Ability to comment on a image | OK |
 |Ability to edit or remove comments | OK |
@@ -215,14 +215,21 @@ Response: { [ Comment ] }
 
 ## Votes
 
-* Add upvote or downvote for image if it does not already exist. 
+* Add vote or update database entry if it already exists.
 
 ```
 POST /images/{id}/votes
 
-Parameters: { type }
+Parameters: { type ('upvote' OR 'downvote') }
 
-Response: { tbd }
+Response: { success }
+```
+
+* Get votes by image.
+```
+GET /images/{id}/votes
+
+Response: { [ Vote ] }
 ```
 
 ## reports
@@ -328,5 +335,6 @@ Response: { userId, name, email, userGroup }
 |16.04.| Backend | 6h |
 |17.04.| Backend | 10h |
 |21.04.| Backend | 5h |
+|24.04.| Backend / Reports, votes | 5h |
 
 Total: 66h

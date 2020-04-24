@@ -1,10 +1,21 @@
 import express from 'express';
 import Validator from 'express-validator';
 import Fs from 'fs';
-import { Image, Comment, Report } from '../database/index.js';
+import { Image, Comment, Report, Vote } from '../database/index.js';
 import { Logger, MinioClient, validate, authenticate } from "../utils.js";
 
-const { check, validationResult } = Validator;
+const { check, checkSchema } = Validator;
+
+// Schema to validate vote types
+var VoteTypes = {
+    "type": {
+      in: 'body',
+      matches: {
+        options: [/\b(?:upvote|downvote)\b/],
+        errorMessage: "Invalid vote type"
+      }
+    }
+  }
 
 var router = express.Router();
 
@@ -273,16 +284,106 @@ async(req, res, next) => {
 
 /* ======================================= /images/{id}/votes ======================================= */
 
-/* POST new comment for image */
 
-router.post('/:id/votes', function(req, res, next) {
-    res.end('/{id}/votes post ok');
+/* GET all image votes */
+
+router.get('/:id/votes', 
+[
+    check("id")
+        .isLength({ min: 1 })
+        .isString()
+        .escape(),
+],
+validate,
+authenticate,
+async(req, res, next) => {
+    
+    try{
+        const votes = await Vote.findAll({      
+        where: {
+            imageId: req.params.id,
+        }
+        });
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ votes });
+
+    } catch (error) {
+        Logger.error(error);
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ error: error })
+    }
+
 });
 
-/* GET image comment */
+/* POST add a vote or update it if it already exists */
+ 
+router.post('/:id/votes', 
+[
+    check("id")
+        .isLength({ min: 1 })
+        .isString()
+        .escape(),
+    check("type")
+        .isLength({ min: 1 })
+        .isString()
+        .escape(),
+    checkSchema(VoteTypes),
+],
+validate,
+authenticate,
+async(req, res, next) => {
 
-router.get('/:id/votes', function(req, res, next) {
-    res.end('/{id}/votes post ok');
+    try {
+
+        const image = await Image.findOne({
+            where: {
+                id: req.params.id,
+            }
+        })
+
+        if(!image) {
+            res.setHeader("Content-Type", "application/json");
+            res.json({ error: 'Image does not exist.' });
+        }
+        else {
+
+            const vote = await Vote.findOne({
+                where: {
+                    imageId: req.params.id,
+                    userId: req.session.userId
+                }
+            })
+
+            if(vote){
+                vote.update({ type: req.body.type })
+
+                Logger.info('Vote changed to ' + vote.type + ' successfully.')
+                res.setHeader("Content-Type", "application/json");
+                res.json({ success: 'Vote by user ' + vote.userId + ' on image ' + vote.imageId + ' changed to ' + vote.type + ' successfully.'})
+            }
+            else {
+
+                const newVote = await Vote.create({
+                    userId: req.session.userId,
+                    imageId: req.params.id,
+                    type: req.body.type,
+                })
+
+                Logger.info(newVote.type + ' added to image ' + newVote.imageId + '  successfully.')
+                res.setHeader("Content-Type", "application/json");
+                res.json({ success: newVote.type + ' added to image ' + newVote.imageId + ' successfully.'})
+            }
+        }
+
+    } catch (error) {
+
+        Logger.error(error);
+
+        res.setHeader("Content-Type", "application/json");
+        res.json({ error: error });
+    }
 });
 
 /* ======================================= /images/{id}/reports ======================================= */
