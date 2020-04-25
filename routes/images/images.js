@@ -1,21 +1,21 @@
 import express from 'express';
 import Validator from 'express-validator';
 import Fs from 'fs';
-import { Image, Comment, Report, Vote } from '../database/index.js';
-import { Logger, MinioClient, validate, authenticate } from "../utils.js";
+import { Image, Comment, Report, Vote } from '../../database/index.js';
+import { Logger, MinioClient, validate, authenticate } from "../../utils.js";
 
 const { check, checkSchema } = Validator;
 
 // Schema to validate vote types
 var VoteTypes = {
     "type": {
-      in: 'body',
-      matches: {
-        options: [/\b(?:upvote|downvote)\b/],
-        errorMessage: "Invalid vote type"
-      }
+        in: 'body',
+        matches: {
+            options: [/\b(?:upvote|downvote)\b/],
+            errorMessage: "Invalid vote type"
+        }
     }
-  }
+}
 
 var router = express.Router();
 
@@ -359,9 +359,9 @@ async(req, res, next) => {
             if(vote){
                 vote.update({ type: req.body.type })
 
-                Logger.info('Vote changed to ' + vote.type + ' successfully.')
+                Logger.info('Vote by user ' + vote.userId + ' on image ' + vote.imageId + ' changed to ' + vote.type + ' successfully.')
                 res.setHeader("Content-Type", "application/json");
-                res.json({ success: 'Vote by user ' + vote.userId + ' on image ' + vote.imageId + ' changed to ' + vote.type + ' successfully.'})
+                res.json({ success: 'Vote changed to ' + vote.type + ' successfully.'})
             }
             else {
 
@@ -475,5 +475,6 @@ async(req, res, next) => {
         res.json({ error: error });
     }
 });
+
 
 export default router

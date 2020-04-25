@@ -1,10 +1,9 @@
 import express from 'express';
 import Validator from 'express-validator';
-import { Comment } from '../database/index.js';
-import { Logger, validate, authenticate } from "../utils.js";
-import { cpus } from 'os';
+import { Comment } from '../../database/index.js';
+import { Logger, validate, authenticate } from "../../utils.js";
 
-const { check, validationResult } = Validator;
+const { check } = Validator;
 
 var router = express.Router();
 

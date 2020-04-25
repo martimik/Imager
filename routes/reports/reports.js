@@ -1,19 +1,13 @@
 import express from 'express';
-import Validator from 'express-validator';
-import Fs from 'fs';
-import { Image, Comment, Report } from '../database/index.js';
-import { Logger, MinioClient, validate, authenticate } from "../utils.js";
-
-const { check, validationResult } = Validator;
+import { Report } from '../../database/index.js';
+import { Logger, authenticateAdmin } from "../../utils.js";
 
 var router = express.Router();
 
-/* ======================================= /reports ======================================= */
-
-/* GET all reports */
+/* GET all reports in database */
 
 router.get('/',
-authenticate,
+authenticateAdmin,
 async(req, res, next) => {
     
     try{

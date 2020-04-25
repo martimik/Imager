@@ -24,10 +24,10 @@ app.use(session(SessionConfig));
 
 /* ============= Routes ============= */
 
-import usersRouter from './routes/users.js'
-import imagesRouter from './routes/images.js'
-import commentsRouter from './routes/comments.js'
-import reportsRouter from './routes/reports.js'
+import usersRouter from './routes/users/index.js'
+import imagesRouter from './routes/images/index.js'
+import commentsRouter from './routes/comments/index.js'
+import reportsRouter from './routes/reports/index.js'
 
 app.use('/users', usersRouter);
 app.use('/images', imagesRouter);

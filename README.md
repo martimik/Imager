@@ -244,7 +244,7 @@ Parameters: { description }
 Response: { success }
 ```
 
-* Get reports of a image.
+* Get reports of a image. Requires admin userGroup.
 ```
 GET /images/{id}/reports
 
@@ -274,7 +274,7 @@ Response: { success }
 
 # Reports
 
-* Return all reports in database
+* Return all reports in database. Requires admin userGroup.
 
 ```
 GET /reports
@@ -285,7 +285,7 @@ Response: { [ Report ] }
 
 # Test Routes
 
-* Returns active session data
+* Return active session data
 
 ```
 GET /session
@@ -337,4 +337,4 @@ Response: { userId, name, email, userGroup }
 |21.04.| Backend | 5h |
 |24.04.| Backend / Reports, votes | 5h |
 
-Total: 66h
+Total: 71h
