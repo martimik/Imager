@@ -25,7 +25,7 @@ export default commandLineArgs([
     {
         name: 'pgdatabase',
         type: String,
-        defaultValue: process.env.PGDATABASE || 'postgres', // update database name here
+        defaultValue: process.env.PGDATABASE || 'postgres',
     },
     {
         name: 'pguser',
@@ -36,11 +36,6 @@ export default commandLineArgs([
         name: 'pgpass',
         type: String,
         defaultValue: process.env.PGPASS || 'postgres',
-    },
-    {
-        name: 'jwtsecret',
-        type: String,
-        defaultValue: process.env.JWTSECRET || 'supersecretjwtkey',
     },
     {
         name: "corsorigin",
