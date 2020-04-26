@@ -63,7 +63,7 @@ async(req, res, next) => {
             imageId: req.body.imageId,
         })
 
-        Logger.info('Favorite ' + newFavorite.imageId  + ' inserted into database.')
+        Logger.info('User ' + newFavorite.userId  + ' added image ' + newFavorite.imageId + ' to favorites.')
         res.setHeader("Content-Type", "application/json");
         res.json({ success: 'Image ' + newFavorite.imageId + " added to favorites successfully."})
 
@@ -110,7 +110,7 @@ async(req, res, next) => {
 
         favorite.destroy();
 
-        Logger.info('User ' + req.session.userId + ' removed Image ' + req.params.id + ' from favorites.')
+        Logger.info('User ' + req.session.userId + ' removed image ' + req.params.id + ' from favorites.')
         res.setHeader("Content-Type", "application/json");
         res.json({ success: 'Image removed from favorites successfully.'});
 

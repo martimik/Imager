@@ -37,6 +37,8 @@ router.post('/', async(req, res, next) => {
                 req.session.email = userWithoutPassword.email;
                 req.session.userGroup = userWithoutPassword.userGroup;
 
+                Logger.info('User: ' + req.session.userId + ' logged in.');
+
                 res.setHeader("Content-Type", "application/json");
                 res.json({
                     userId: userWithoutPassword.id,

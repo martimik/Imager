@@ -52,7 +52,7 @@ async(req, res, next) => {
                 userGroup: req.body.userGroup
             })
 
-            Logger.info('User registered: ' + newUser.id, newUser)
+            Logger.info('User: ' + newUser.id, newUser + ' registered.')
 
             res.setHeader("Content-Type", "application/json");
             res.json({ success: 'User ' +  newUser.username + " was successfully registered."})

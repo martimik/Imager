@@ -7,7 +7,6 @@ import Private from './private.js'
 
 var router = express.Router();
 
-
 router.use('/', Users);
 router.use('/login', Login);
 router.use('/logout', Logout);

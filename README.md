@@ -325,16 +325,18 @@ Response: { userId, name, email, userGroup }
 | --- | --- | --- |
 |14.03.| initial documentation | 2h |
 |26.03.| Database and api-documentation | 4h |
-|02.04.| Setting up cloud services | 8h |
+|02.04.| Setting up cloud services | 6h |
 |03.04.| Backend / dokumentation | 6h |
 |07.04.| Backend | 4h |
 |08.04.| Backend | 4h |
-|13.04.| Backend | 6h |
+|13.04.| Backend | 5h |
 |14.04.| Backend | 6h |
 |15.04.| Backend | 6h |
-|16.04.| Backend | 6h |
-|17.04.| Backend | 10h |
+|16.04.| Backend | 5h |
+|17.04.| Backend | 8h |
 |21.04.| Backend | 5h |
-|24.04.| Backend / Reports, votes | 5h |
+|24.04.| Backend | 5h |
+|25.04.| Backend | 2h |
 
-Total: 71h
+Total: 68h
+                                                           
