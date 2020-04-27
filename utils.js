@@ -20,7 +20,7 @@ export const Logger = Pino({
 
 export const MinioClient = new Minio.Client({
     endPoint: Config.minioEndPoint,
-    //port: 9000,
+    port: 9001,
     useSSL: false,
     accessKey: Config.minioAccessKey,
     secretKey: Config.minioSecretKey
