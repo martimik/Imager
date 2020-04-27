@@ -42,4 +42,19 @@ export default commandLineArgs([
         type: String,
         defaultValue: process.env.allowed_origins || "http://localhost:3000"
     },
+    {
+        name: 'minioEndPoint',
+        type: String,
+        defaultValue: process.env.MINIOENDPOINT || 'minio.imager.local'
+    },
+    {
+        name: 'minioAccessKey',
+        type: String,
+        defaultValue: process.env.MINIOACCESSKEY || 'minio'
+    },
+    {
+        name: 'minioSecretKey',
+        type: String,
+        defaultValue: process.env.MINIOSECRETKEY || 'minio123'
+    },
 ])

@@ -1,8 +1,9 @@
 import Pino from 'pino';
 import Minio from 'minio';
 import Validator from 'express-validator';
+import Config from './config.js';
 
-const { check, validationResult } = Validator;
+const { validationResult } = Validator;
 
 export const DBLogger = Pino({
     name: 'Database',
@@ -18,11 +19,11 @@ export const Logger = Pino({
 
 
 export const MinioClient = new Minio.Client({
-    endPoint: 'minio.imager.local',
+    endPoint: Config.minioEndPoint,
     //port: 9000,
     useSSL: false,
-    accessKey: 'minio',
-    secretKey: 'minio123'
+    accessKey: Config.minioAccessKey,
+    secretKey: Config.minioSecretKey
 });
 
 export const SessionConfig = {

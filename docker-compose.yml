@@ -1,10 +1,10 @@
-version: "3"
+version: "3.4"
 services:
   
   api_server:
     build: ./
     ports:
-      - "3000:3000"
+      - "8080:8081"
     env_file:
       - ./.env
     # environment:
@@ -13,7 +13,7 @@ services:
       - ./:/usr/src/app
       - /usr/src/app/node_modules
     networks:
-      - service_app
+      - soanet
 
 networks:
-  service_app:
+  soanet:
