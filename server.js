@@ -37,10 +37,12 @@ app.use('/reports', reportsRouter);
 /* ============= Test routes ============= */
 
 app.get("/test", (req, res) => {
+    res.setHeader("Content-Type", "application/json");
     res.json({ message: "Ok" });
 });
 
-app.get("/session", (req, res) => {
+app.get("/session", (req, res) => {3
+    res.setHeader("Content-Type", "application/json");
     res.send({
         userId: req.session.userId,
         name: req.session.name,
