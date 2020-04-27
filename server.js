@@ -49,6 +49,8 @@ app.get("/session", (req, res) => {
     });
 });
 
+console.log(config.pghost + config.pgport)
+
 app.listen(config.port);
 console.log("Server running on port: %s", config.port);
 console.log("CORS ORIGIN:", config.corsorigin);
