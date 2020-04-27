@@ -50,7 +50,7 @@ app.get("/session", (req, res) => {
 });
 
 app.listen(config.port);
-console.log("Server running on http://%s:%s", config.port);
+console.log("Server running on port: %s", config.port);
 console.log("CORS ORIGIN:", config.corsorigin);
 
 export default app;
