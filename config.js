@@ -2,15 +2,10 @@ import commandLineArgs from 'command-line-args'
 
 export default commandLineArgs([
     {
-        name: 'ip',
-        type: Number,
-        defaultValue: process.env.IP || "localhost",
-    },
-    {
         name: 'port',
         alias: 'p',
         type: Number,
-        defaultValue: process.env.PORT || 3000,
+        defaultValue: process.env.PORT || 8080,
     },
     {
         name: 'pghost',
@@ -40,7 +35,7 @@ export default commandLineArgs([
     {
         name: "corsorigin",
         type: String,
-        defaultValue: process.env.allowed_origins || "http://localhost:3000"
+        defaultValue: process.env.allowed_origins || "http://localhost:8080"
     },
     {
         name: 'minioEndPoint',

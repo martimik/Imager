@@ -49,7 +49,7 @@ export function validate (req, res, next) {
     }
 }
 
-/* Middleware to authenticate user through session parameters */ 
+/* Middleware to authenticate user */ 
 export function authenticate (req, res, next) {
     if (req.session.userGroup != 0 && req.session.userGroup != 1) {
         res.setHeader("Content-Type", "application/json");
@@ -60,6 +60,7 @@ export function authenticate (req, res, next) {
     }
 };
 
+/* Middleware to authenticate admin user */
 export function authenticateAdmin (req, res, next) {
     if (req.session.userGroup != 0) {
         res.setHeader("Content-Type", "application/json");
