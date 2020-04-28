@@ -337,6 +337,7 @@ Response: { userId, name, email, userGroup }
 |21.04.| Backend | 5h |
 |24.04.| Backend | 5h |
 |25.04.| Backend | 2h |
+|27.04.| Docker  | 5h |
 
-Total: 68h
+Total: 73h
                                                            

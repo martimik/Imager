@@ -11,8 +11,14 @@ import { Database, seedIfNeeded } from "./database/index.js";
 /* ============= App setup ============= */
 
 //Database.drop();
-Database.sync({ force: false });
-seedIfNeeded();
+try {
+    Database.sync({ force: false });
+    seedIfNeeded();
+}catch(err){
+    console.error('Unable to connect to the database:');
+    console.error(error);
+}
+
 
 const app = express();
 
