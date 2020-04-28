@@ -22,8 +22,6 @@ export const Database = new Sequelize({
 })
 
 
-// export const Database = new Sequelize('postgres://monkey_user:monkey_pass@pgpool:5430')
-
 test();
 
 async function test() {
