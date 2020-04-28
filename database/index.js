@@ -10,6 +10,7 @@ import ReportModel from './report.js';
 import Config from '../config.js';
 import { DBLogger, Logger } from "../utils.js";
 
+
 export const Database = new Sequelize({
     dialect: 'postgres',
     host: Config.pghost,
@@ -20,12 +21,20 @@ export const Database = new Sequelize({
     logging: DBLogger.debug.bind(DBLogger),
 })
 
-try {
-    Database.authenticate();
-    console.log('DB connection has been established successfully.');
-} catch (error) {
-    console.error('Unable to connect to the database:', error);
+
+// export const Database = new Sequelize('postgres://monkey_user:monkey_pass@pgpool:5430')
+
+test();
+
+async function test() {
+    try {
+        await Database.authenticate();
+        console.log('DB connection has been established successfully.');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
 }
+
 
 export const User = UserModel(Database);
 export const Image = ImageModel(Database);

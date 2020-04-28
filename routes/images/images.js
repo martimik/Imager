@@ -132,7 +132,7 @@ async(req, res, next) => {
         else {
             MinioClient.getObject("images", image.id, function (error, file) {
                 if (error) {
-                    Logger.error(err);
+                    Logger.error(error);
                     return res.status(500).send(error);
                 }
                 file.pipe(res);
