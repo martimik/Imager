@@ -13,9 +13,6 @@ import { DBLogger, Logger } from "../utils.js";
 
 export const Database = new Sequelize({
     dialect: 'postgres',
-    dialectOptions: {
-       ssl: true,
-    },
     host: Config.pghost,
     port: Config.pgport,
     database: Config.pgdatabase,
@@ -24,8 +21,6 @@ export const Database = new Sequelize({
     logging: DBLogger.debug.bind(DBLogger),
 })
 
-
-// export const Database = new Sequelize('postgres://monkey_user:monkey_pass@pgpool:5430')
 
 test();
 
