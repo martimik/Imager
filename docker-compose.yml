@@ -1,6 +1,6 @@
 version: "3.4"
 services:
-  
+
   api_server:
     build: ./
     ports:
@@ -8,12 +8,14 @@ services:
     env_file:
       - ./.env
     # environment:
-    #   - 
+    #   -
     volumes:
       - ./:/usr/src/app
       - /usr/src/app/node_modules
     networks:
-      - soanet
-
+        - default 
+            
 networks:
-  soanet:
+    default:
+      external:
+        name: infra_soanet
