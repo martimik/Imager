@@ -43,6 +43,11 @@ export default commandLineArgs([
         defaultValue: process.env.MINIOENDPOINT || 'minio.imager.local'
     },
     {
+        name: 'minioPort',
+        type: Number,
+        defaultValue: process.env.MINIOPORT || '9000'
+    },
+    {
         name: 'minioAccessKey',
         type: String,
         defaultValue: process.env.MINIOACCESSKEY || 'minio'

@@ -19,12 +19,17 @@ export const Logger = Pino({
 
 
 export const MinioClient = new Minio.Client({
-    endPoint: 'minio',
-    port: 9001,
+    endPoint: Config.minioEndPoint,
+    port: 9000,
     useSSL: false,
     accessKey: Config.minioAccessKey,
     secretKey: Config.minioSecretKey
 });
+
+MinioClient.listBuckets(function(err, buckets) {
+  if (err) return console.log(err)
+  console.log('buckets :', buckets)
+})
 
 export const SessionConfig = {
     name: "auth",
