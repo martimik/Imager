@@ -19,7 +19,6 @@ try {
     console.error(error);
 }
 
-
 const app = express();
 
 app.use(cors({ credentials: true, origin: config.corsorigin }));

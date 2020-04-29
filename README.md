@@ -30,16 +30,11 @@ This repository contains "Coding REST API" assignment for TTOW0130 - Service-Ori
 |-------|:------:|
 |Ability to create a user / register | OK |
 |Ability to login and logout | OK |
-|Able to list most "trending" images | Not implemented |
-|Logging is done to an external logging server | Not implemented |
 
 ### Extra credits
 
 |Feature|status|
 |-------|:------:|
-|API contains tests | Not implemented |
-|Ability to download favorites as a zip / export | Not implemented |
-|Login using a Google / Facebook / etc. account | Not implemented |
 |Multiple user levels (admin, normal user, anonymous) | OK |
 |Public (shows up in recent uploads) and private (only visible to self) gallery | OK |
 |Report this image feature | OK |
@@ -48,8 +43,23 @@ This repository contains "Coding REST API" assignment for TTOW0130 - Service-Ori
 
 |Feature|status|
 |-------|:------:|
-|Usage of Gitlab CI to build a docker image of the API and upload it to Gitlab container registry | Not implemented |
-|Creating a docker-compose.yaml file with the appropriate environment | Not implemented |
+|Creating a docker-compose.yaml file with the appropriate environment | OK |
+
+# Installation
+
+This rest-api also requires [Infra](https://gitlab.labranet.jamk.fi/ttow0130/infra) to function properly.
+
+Clone the repository and create .env file from .env.example with appropriate values. 
+
+Build docker image and and start the services.
+
+```
+$ docker-compose build
+$ docker-compose up
+
+// or in detached mode 
+$ docker-compose up -d
+```
 
 # Database
 
@@ -92,19 +102,23 @@ Resource URIs
 /reports
 ```
 
+
 # Users
+
 
 * Create a new user to the database if the given email is not already in use. Usergroup always defaults to normal user.
 
 ```
 POST /users
 
-Parameters: { userName, password, email }
+Parameters: { username, password, email, userGroup }
 
 Response: { success }
 ```
 
+
 ## Login
+
 
 * Authenticate the user and creates a session on the server. 
 
@@ -116,7 +130,9 @@ Parameters as basic-auth: { email, password }
 Response: { userId, name, email, userGroup }
 ```
 
+
 ## logout
+
 
 * Destroy the session on the server if it exists.
 
@@ -126,14 +142,16 @@ POST /users/logout
 Response: { success }
 ```
 
+
 ## Favorites
+
 
 * Get user favorite images
 
 ```
 GET /users/favorites
 
-Parameters: { userId }
+Parameters: { }
 
 Response: { [ image ] }
 ```
@@ -156,7 +174,9 @@ DELETE /users/favorites/{id}
 Response: { success }
 ```
 
+
 ## Private 
+
 
 * Get user private images
 
@@ -166,19 +186,21 @@ GET /users/private
 Response: { [ image ] }
 ```
 
+
 # Images
+
 
 * Upload new image to the service. Requires an active user session.
 
 ```
 POST /images
 
-Parameters: { title, isPrivate, imgFile }
+Parameters: { title, isPrivate, image (type: file) }
 
 Response: { success }
 ```
 
-* Return all images, exlude other users private images.
+* Return all images, excluding private images.
 
 ```
 GET /images
@@ -186,15 +208,33 @@ GET /images
 Response: { [ image ] }
 ```
 
-* Return a specific image.
+* Return specific image.
 
 ```
 GET /images/{id}
 
-Response: { image }
+Response: { image (type: file) }
 ```
 
+* Delete specific image.
+
+```
+DELETE /images/{id}
+
+Response: { success }
+```
+
+
 ## Comments
+
+
+* Get all comments of specific image
+
+```
+GET /images/{id}/comments
+
+Response: { [ Comment ] }
+```
 
 * Add a comment to image.
 
@@ -206,14 +246,16 @@ Parameters: { content }
 Response: { success }
 ```
 
-* Get comments of a image.
-```
-GET /images/{id}/comments
-
-Response: { [ Comment ] }
-```
 
 ## Votes
+
+* Get votes by image.
+
+```
+GET /images/{id}/votes
+
+Response: { [ Vote ] }
+```
 
 * Add vote or update database entry if it already exists.
 
@@ -225,14 +267,15 @@ Parameters: { type ('upvote' OR 'downvote') }
 Response: { success }
 ```
 
-* Get votes by image.
-```
-GET /images/{id}/votes
-
-Response: { [ Vote ] }
-```
-
 ## reports
+
+* Get reports of a image. Requires admin userGroup.
+
+```
+GET /images/{id}/reports
+
+Response: { [ Report ] }
+```
 
 * Add a report to image.
 
@@ -244,22 +287,17 @@ Parameters: { description }
 Response: { success }
 ```
 
-* Get reports of a image. Requires admin userGroup.
-```
-GET /images/{id}/reports
-
-Response: { [ Report ] }
-```
-
 
 # Comments
+
+Only the uploader of comment can do the following actions.
 
 * Edit comment
 
 ```
 PUT /comments/{id}
 
-Parameters: { newComment }
+Parameters: { content }
 
 Response: { success }
 ```
@@ -285,11 +323,20 @@ Response: { [ Report ] }
 
 # Test Routes
 
+* Test backend is up
+
+```
+GET /test
+
+Response: { message }
+
+```
+
 * Return active session data
 
 ```
 GET /session
-Parameters: {}
+
 Response: { userId, name, email, userGroup }
 
 ```
@@ -300,15 +347,24 @@ Response: { userId, name, email, userGroup }
 * Express-fileupload
 * Express-session
 * express-validator
-* pino
-* cors
-* Sequalize
-* minio
-* command-line-args
 * basic-auth
 * Bcrypt
+* Sequalize
+* minio
+* pg
+* pg-hstore
+* pino
+* pino-pretty
+* cors
+* command-line-args
 
 # Report
+
+## Challenges and learning experiences
+
+Most challenged were related to using docker and sequelize, for i had no previous experience of their use. Configurating the docker-compose file for backend took some trial and error to get it right. Especially connecting api container to the same network as infra and how docker resolves container adresses was a valuable realization about how docker operates. Although using sequelize was pretty simple, some features (OR select clauses for example) didnt work quite like in documentation.
+
+Routing didn't also go exacly as planned, since i couldn't find a way to create routes with parameters according to the structure used in this project. This led to a large file know as images.js. Not sure if this is a limitation of express or is there a smart way to do that, but otherwise the structure should be manageable when writing (a lot of) more routes. 
 
 # Notes 
 
@@ -326,7 +382,7 @@ Response: { userId, name, email, userGroup }
 |14.03.| initial documentation | 2h |
 |26.03.| Database and api-documentation | 4h |
 |02.04.| Setting up cloud services | 6h |
-|03.04.| Backend / dokumentation | 6h |
+|03.04.| Backend / documentation | 6h |
 |07.04.| Backend | 4h |
 |08.04.| Backend | 4h |
 |13.04.| Backend | 5h |
@@ -338,6 +394,8 @@ Response: { userId, name, email, userGroup }
 |24.04.| Backend | 5h |
 |25.04.| Backend | 2h |
 |27.04.| Docker  | 5h |
+|28.04.| Docker  | 5h |
+|29.04.| Docker/Report  | 3h |
 
-Total: 73h
+Total: 76h
                                                            
