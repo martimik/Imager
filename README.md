@@ -1,8 +1,8 @@
 # Image sharing service REST API
 
-### Mikko Martikainen / K8936
+### Mikko Martikainen
 
-This repository contains "Coding REST API" assignment for TTOW0130 - Service-Oriented Applications. This assignments consists of the following parts:
+This repository contains the following parts:
 
 * API documentation
 * Report
@@ -65,7 +65,7 @@ $ docker-compose up -d
 
 ## Database description
 
-Data is stored inside postgreSql database.
+Image files are stored in minio block-storage, data in postgreSql database.
 
 ![](db-schema.PNG)
 
@@ -358,44 +358,10 @@ Response: { userId, name, email, userGroup }
 * cors
 * command-line-args
 
-# Report
-
-## Challenges and learning experiences
-
-Most challenged were related to using docker and sequelize, for i had no previous experience of their use. Configurating the docker-compose file for backend took some trial and error to get it right. Especially connecting api container to the same network as infra and how docker resolves container adresses was a valuable realization about how docker operates. Although using sequelize was pretty simple, some features (OR select clauses for example) didnt work quite like in documentation.
-
-Routing didn't also go exacly as planned, since i couldn't find a way to create routes with parameters according to the structure used in this project. This led to a large file know as images.js. Not sure if this is a limitation of express or is there a smart way to do that, but otherwise the structure should be manageable when writing (a lot of) more routes. 
-
 # Notes 
 
 ## CSC Services
 
-* cPouta instance must be "medium"-size, small runs out of memory and services crash.
+* cPouta instance must be "medium"-size (4gb of memory), small runs out of memory and services crash.
 * To access services via browser, http- and tcp-traffic must be allowed in security group rules.
 * Establishing shh-connection with virtual machine also requires the user account name, which [depends on the image used](https://docs.csc.fi/cloud/pouta/connecting-to-vm/), to gain access.
-
-
-### Time Tracking
-
-|Date| Feature |Hours|
-| --- | --- | --- |
-|14.03.| initial documentation | 2h |
-|26.03.| Database and api-documentation | 4h |
-|02.04.| Setting up cloud services | 6h |
-|03.04.| Backend / documentation | 6h |
-|07.04.| Backend | 4h |
-|08.04.| Backend | 4h |
-|13.04.| Backend | 5h |
-|14.04.| Backend | 6h |
-|15.04.| Backend | 6h |
-|16.04.| Backend | 5h |
-|17.04.| Backend | 8h |
-|21.04.| Backend | 5h |
-|24.04.| Backend | 5h |
-|25.04.| Backend | 2h |
-|27.04.| Docker  | 5h |
-|28.04.| Docker  | 5h |
-|29.04.| Docker/Report  | 3h |
-
-Total: 76h
-                                                           
